@@ -1,0 +1,57 @@
+/************************************************************
+	文件: $NewBehaviourScript$.cs
+	作者: Auto
+	日期: $Time$
+	功能: 功能描述
+*************************************************************/
+using GameFramework.Event;
+using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
+
+namespace NF.Main
+{
+	public class $NewBehaviourScript$ : UGuiForm // UICell
+	{
+#region UI组件
+$UI Component Variables$
+#endregion
+
+#region 重写方法
+		protected override void OnInit(object userData)
+        {
+            base.OnInit(userData);
+$FindUICode$
+
+$AddBtnCode$
+		}
+		protected override void OnOpen(object userData)
+        {
+            base.OnOpen(userData);
+            //NFNotification.AddNotification(Constant.Notification.EventId_Home, OnEventHandle);
+        }
+        protected override void OnClose(bool isShutdown, object userData)
+        {
+            base.OnClose(isShutdown, userData);
+            //NFNotification.RemoveNotification(Constant.Notification.EventId_Home, OnEventHandle);
+        }
+#endregion
+
+#region event
+		protected void OnEventHandle(object sender, GameEventArgs gameEventArgs)
+		{
+			NFEventArgs ne = (NFEventArgs)gameEventArgs;
+			switch (ne.EventType)
+            {
+                //case Constant.Notification.StartGame:
+                //    GameMode mode = (GameMode)ne.UserData;
+                //    break;
+            }
+		}
+#endregion
+
+#region UI事件
+$UIEventCode$
+#endregion
+	}
+}
