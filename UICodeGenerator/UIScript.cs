@@ -45,10 +45,16 @@ namespace Game.Editor
         private const string FindToggle = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Toggle>();";
         private const string FindTransform = "\t\t\tm{0} = transform.Find(\"{1}\");";
 
-        // 字符串3，查找组件代码的模板
+
+        // 字符串2，查找组件代码的模板
         private const string RegistEvent = "\t\t\tm{0}.onClick.AddListener(OnClick{0});";
-        // 字符串3，查找组件代码的模板
+        // 字符串2，查找组件代码的模板
         private const string EventFuncCode = "\t\tprivate void OnClick{0}()\n\t";
+
+        // 字符串3，查找组件代码的模板
+        private const string RegistToggleEvent = "\t\t\tm{0}.onValueChanged.AddListener((bool value) => OnSwitchToggleChange{0}(m{0},value) );";
+        // 字符串3，查找组件代码的模板
+        private const string EventToggleFuncCode = "\t\tprivate void OnSwitchToggleChange{0}(Toggle toogle_, bool change)\n\t";
 
         // 字符串4，查找组件代码的模板
         private const string RegistItemRenderEvent = "\t\t\tm{0}.onCellForRowAtIndexPath = ItemRender{0};";
@@ -87,6 +93,8 @@ namespace Game.Editor
             string m_RegistUICode = "";
             //按钮事件代码
             string m_UIEventCode = "";
+            //Scorll事件代码
+            string m_UIEventScrollListCode = "";
 
             m_NameList.Clear();
             for (int i = 0; i < m_TreeViewItem.Count; i++)
@@ -176,11 +184,11 @@ namespace Game.Editor
                         m_RegistUICode = m_RegistUICode + "\n" + m_ReUICode1 + "\n" + m_ReUICode2;
                     }
                     else { m_RegistUICode += m_ReUICode; }
-                    if (m_UIEventCode != "")
+                    if (m_UIEventScrollListCode != "")
                     {
-                        m_UIEventCode = m_UIEventCode + "\n" + m_UIEveCode1+ "\n" + m_UIEveCode2;
+                        m_UIEventScrollListCode = m_UIEventScrollListCode + "\n" + m_UIEveCode1+ "\n" + m_UIEveCode2;
                     }
-                    else { m_UIEventCode += m_UIEveCode1+ "\n" + m_UIEveCode2; }
+                    else { m_UIEventScrollListCode += m_UIEveCode1+ "\n" + m_UIEveCode2; }
                 }
                 //Slider
                 else if (name.Contains("SLIDER"))
@@ -193,6 +201,19 @@ namespace Game.Editor
                 {
                     m_FindUIComCode = string.Format(FindToggle, uITreeViewItem.Name.Replace(" ", ""), uITreeViewItem.Path);
                     m_UIComCode = string.Format(Toggle, uITreeViewItem.Name.Replace(" ", ""));
+
+                    m_ReUICode = string.Format(RegistToggleEvent, uITreeViewItem.Name.Replace(" ", ""));
+                    m_UIEveCode = string.Format(EventToggleFuncCode, uITreeViewItem.Name.Replace(" ", ""))+"\t{\n\t\t}";
+                    if (m_RegistUICode != "")
+                    {
+                        m_RegistUICode = m_RegistUICode + "\n" + m_ReUICode;
+                    }
+                    else { m_RegistUICode += m_ReUICode; }
+                    if (m_UIEventCode != "")
+                    {
+                        m_UIEventCode = m_UIEventCode + "\n" + m_UIEveCode;
+                    }
+                    else { m_UIEventCode += m_UIEveCode; }
                 }
                 //Tranform
                 else
@@ -213,7 +234,9 @@ namespace Game.Editor
             }
             UICode = Resources.Load<TextAsset>("Template").text;
             UICode = UICode.Replace("$UI Component Variables$", m_UIComponentCode).Replace("$FindUICode$", m_FindUIComponentCode).Replace("$NewBehaviourScript$", m_ScriptName);
-            UICode = UICode.Replace("$AddBtnCode$", m_RegistUICode).Replace("$UIEventCode$", m_UIEventCode);
+            UICode = UICode.Replace("$AddBtnCode$", m_RegistUICode);
+            UICode = UICode.Replace("$UIEventCode$", m_UIEventCode);
+            UICode = UICode.Replace("$UIEventScrollListCode$", m_UIEventScrollListCode);
             UICode = UICode.Replace("$Time$", string.Concat(DateTime.Now.Year, "/", DateTime.Now.Month, "/", DateTime.Now.Day, " ", DateTime.Now.Hour, ":", DateTime.Now.Minute, ":", DateTime.Now.Second));
             return UICode;
         }
