@@ -8,6 +8,7 @@ using GameFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using NF.UI;
 
 namespace NF.Main
 {
