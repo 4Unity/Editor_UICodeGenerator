@@ -24,10 +24,10 @@ namespace Game.Editor
         //字符串1，声明组件代码的模板
         private const string Image = "\t\tprivate Image m{0};";
         private const string Text = "\t\tprivate Text m{0};";
-        private const string Button = "\t\tprivate GameObject m{0};";
+        private const string Button = "\t\tprivate Button m{0};";
         private const string Transform = "\t\tprivate Transform m{0};";
         private const string InputField = "\t\tprivate InputField m{0};";
-        private const string ScrollRect = "\t\tprivate ScrollRect m{0};";
+        private const string ScrollList = "\t\tprivate ScrollList m{0};";
         private const string Dropdown = "\t\tprivate Dropdown m{0};";
         private const string Scrollbar = "\t\tprivate Scrollbar m{0};";
         private const string Slider = "\t\tprivate Slider m{0};";
@@ -36,9 +36,9 @@ namespace Game.Editor
         // 字符串2，查找组件代码的模板
         private const string FindImage = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Image>();";
         private const string FindText = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Text>();";
-        private const string FindButton = "\t\t\tm{0} = transform.Find(\"{1}\").gameObject;";
+        private const string FindButton = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Button>();";
         private const string FindInputField = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<InputField>();";
-        private const string FindScrollRect = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<ScrollRect>();";
+        private const string FindScrollList = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<ScrollList>();";
         private const string FindDropdown = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Dropdown>();";
         private const string FindScrollbar = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Scrollbar>();";
         private const string FindSlider = "\t\t\tm{0} = transform.Find(\"{1}\").GetComponent<Slider>();";
@@ -49,6 +49,17 @@ namespace Game.Editor
         private const string RegistEvent = "\t\t\tm{0}.onClick.AddListener(OnClick{0});";
         // 字符串3，查找组件代码的模板
         private const string EventFuncCode = "\t\tprivate void OnClick{0}()\n\t";
+
+        // 字符串4，查找组件代码的模板
+        private const string RegistItemRenderEvent = "\t\t\tm{0}.onCellForRowAtIndexPath = ItemRender{0};";
+        // 字符串4，查找组件代码的模板
+        private const string EventItemRenderFuncCode = "\t\tprivate void ItemRender{0}(int index, Transform child, UICell cell)\n\t";
+
+        // 字符串4，查找组件代码的模板
+        private const string RegistInitScrollListEvent = "\t\t\tm{0}.onInitScrollList = InitScrollList{0};";
+        // 字符串4，查找组件代码的模板
+        private const string EventInitScrollListFuncCode = "\t\tprivate void InitScrollList{0}()\n\t";
+
 
         //脚本名称，和预制体名称一致
         private static string m_ScriptName = "";
@@ -104,6 +115,7 @@ namespace Game.Editor
                 {
                     m_FindUIComCode = string.Format(FindButton, uITreeViewItem.Name.Replace(" ",""), uITreeViewItem.Path);
                     m_UIComCode = string.Format(Button, uITreeViewItem.Name.Replace(" ", ""));
+                    
                     m_ReUICode = string.Format(RegistEvent, uITreeViewItem.Name.Replace(" ", ""));
                     m_UIEveCode = string.Format(EventFuncCode, uITreeViewItem.Name.Replace(" ", ""))+"\t{\n\t\t}";
                     if (m_RegistUICode != "")
@@ -150,8 +162,25 @@ namespace Game.Editor
                 //ScrollRect
                 else if (name.Contains("SCROLL"))
                 {
-                    m_FindUIComCode = string.Format(FindScrollRect, uITreeViewItem.Name.Replace(" ", ""), uITreeViewItem.Path);
-                    m_UIComCode = string.Format(ScrollRect, uITreeViewItem.Name.Replace(" ", ""));
+                    m_FindUIComCode = string.Format(FindScrollList, uITreeViewItem.Name.Replace(" ", ""), uITreeViewItem.Path);
+                    m_UIComCode = string.Format(ScrollList, uITreeViewItem.Name.Replace(" ", ""));
+
+                    string m_ReUICode1 = string.Format(RegistItemRenderEvent, uITreeViewItem.Name.Replace(" ", ""));
+                    string m_ReUICode2 = string.Format(RegistInitScrollListEvent, uITreeViewItem.Name.Replace(" ", ""));
+
+                    string m_UIEveCode1 = string.Format(EventItemRenderFuncCode, uITreeViewItem.Name.Replace(" ", ""))+"\t{\n\t\t}";
+                    string m_UIEveCode2 = string.Format(EventInitScrollListFuncCode, uITreeViewItem.Name.Replace(" ", ""))+"\t{\n\t\t}";
+
+                    if (m_RegistUICode != "")
+                    {
+                        m_RegistUICode = m_RegistUICode + "\n" + m_ReUICode1 + "\n" + m_ReUICode2;
+                    }
+                    else { m_RegistUICode += m_ReUICode; }
+                    if (m_UIEventCode != "")
+                    {
+                        m_UIEventCode = m_UIEventCode + "\n" + m_UIEveCode1+ "\n" + m_UIEveCode2;
+                    }
+                    else { m_UIEventCode += m_UIEveCode1+ "\n" + m_UIEveCode2; }
                 }
                 //Slider
                 else if (name.Contains("SLIDER"))
