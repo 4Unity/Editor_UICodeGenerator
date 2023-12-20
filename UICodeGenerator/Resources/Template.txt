@@ -51,6 +51,10 @@ $AddBtnCode$
 		}
 #endregion
 
+#region UIScorll事件
+$UIEventScrollListCode$
+#endregion
+
 #region UI事件
 $UIEventCode$
 #endregion
