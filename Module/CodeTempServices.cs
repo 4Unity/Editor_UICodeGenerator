@@ -69,7 +69,6 @@ namespace NF.Editor
         public void OnEnable()
         {
             this.titleContent = new GUIContent("创建模板Service文件");//设置窗口标题
-            //GetPathByMemory(); 
         }
 
         private void OnDisable()
@@ -79,23 +78,7 @@ namespace NF.Editor
 
         private void OnDestroy()
         {
-            // EditorPrefs.SetString("mNamespaceReplaceName", mNamespaceReplaceName);
-            // EditorPrefs.SetString("mOldNamespaceReplaceName", mOldNamespaceReplaceName);
-            // EditorPrefs.SetString("mNamespaceReplacePaths", mNamespaceReplacePaths);
-            // EditorPrefs.SetString("mFilteringName", mFilteringName);
-            // EditorPrefs.SetString("mFilteringDirectoryName", mFilteringDirectoryName);
-        }
-
-        /// <summary>
-        /// 从内存中获取存储的路径
-        /// </summary>
-        void GetPathByMemory()
-        {
-            // mNamespaceReplaceName = EditorPrefs.GetString("mNamespaceReplaceName", "NF.Main");
-            // mOldNamespaceReplaceName = EditorPrefs.GetString("mOldNamespaceReplaceName", "NF.Main");
-            // mNamespaceReplacePaths = EditorPrefs.GetString("mNamespaceReplacePaths", "");
-            // mFilteringName = EditorPrefs.GetString("mFilteringName", ".meta");
-            // mFilteringDirectoryName = EditorPrefs.GetString("mFilteringDirectoryName", "DataTable");
+            
         }
 
         //替换命名空间
@@ -133,7 +116,7 @@ namespace NF.Editor
     public class EditorCodeTempServices
     {
         [MenuItem("NFTools/Code/创建Service代码模板", false, 0x0002)]
-        public static void NamespaceReplaceFiles()
+        public static void CreateModuleFiles()
         {
             EditorWindow.GetWindow(typeof(CodeTempServices));
         }
