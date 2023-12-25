@@ -1,0 +1,38 @@
+using LitJson;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace NF.Main
+{
+    /// <summary>
+    /// 数据
+    /// </summary>
+    [Serializable]
+    public class $DataScriptName$
+    {
+        /// <summary>
+        /// id
+        /// </summary>
+        public int Id;
+        /// <summary>
+        /// 有效状态 ValidityType
+        /// </summary>
+        public int State;
+        /// <summary>
+        /// 有效时间
+        /// </summary>
+        public long Time;
+        /// <summary>
+        /// 解锁进度
+        /// </summary>
+        public int Value;
+        /// <summary>
+        /// 获得时间
+        /// </summary>
+        public long AcquisTime;
+        
+        //[JsonIgnore]
+    }
+}

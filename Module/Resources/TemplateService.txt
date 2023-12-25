@@ -1,0 +1,184 @@
+using GameFramework.DataTable;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace NF.Main
+{
+    public class $ServiceScriptName$ : NFInstance<$ServiceScriptName$>
+    {
+        #region arg
+        //本地数据
+        private NFSerializableDictionary<int, $DataScriptName$> m$DataScriptName$s = new NFSerializableDictionary<int, $DataScriptName$>();
+        private List<$DataScriptName$> m$DataScriptName$List = null;
+
+        //配置表
+        private IDataTable<$TableInfo$> m$TableInfo$Table;
+        public IDataTable<$TableInfo$> $TableInfo$Table
+        {
+            get
+            {
+                if (m$TableInfo$Table == null)
+                    m$TableInfo$Table = GameEntry.DataTable.GetDataTable<$TableInfo$>();
+                return m$TableInfo$Table;
+            }
+        }
+
+        #endregion
+
+        #region Init load
+        public void Init()
+        {
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            string data = GameEntry.Setting.GetString(Constant.DataKey.$DataScriptName$, "");
+            if (data.Length > 0)
+            {
+                m$DataScriptName$s = JsonUtility.FromJson<NFSerializableDictionary<int, $DataScriptName$>>(data);
+            }
+
+            $TableInfo$[] infos = $TableInfo$Table.GetAllDataRows();
+
+            for (int i = 0; i < infos.Length; i++)
+            {
+                $TableInfo$ info = infos[i];
+                //补充增加的数据
+                if (!m$DataScriptName$s.ContainsKey(info.Id))
+                {
+                    NFDebug.Log(">>> load 补充配置表新增数据 " + info.Id);
+
+                    $DataScriptName$ adata = new $DataScriptName$();
+                    adata.Value = 0;
+                    adata.Id = info.Id;
+                    adata.State = 0;
+                    adata.Time = 0;
+                    adata.AcquisTime = 0;
+                    m$DataScriptName$s.Add(info.Id, adata);
+                }
+            }
+            //有效期判断
+            foreach (var key in m$DataScriptName$s.Keys)
+            {
+                $DataScriptName$ adata = m$DataScriptName$s[key];
+                if (adata.State == (int)ValidityType.Forever)
+                {
+                    NFDebug.Log(">>> 完成解锁 load " + adata.Id);
+                }
+            }
+            
+        }
+
+        public void SaveData()
+        {
+            string data = JsonUtility.ToJson(m$DataScriptName$s);
+            GameEntry.Setting.SetString(Constant.DataKey.$DataScriptName$, data);
+        }
+
+        #endregion
+
+        #region 配置表接口
+        /// <summary>
+        /// 获取全部数据
+        /// </summary>
+        /// <returns></returns>
+        public List<$DataScriptName$> Get$DataScriptName$List()
+        {
+            if (m$DataScriptName$s == null || m$DataScriptName$s.Count == 0)
+                LoadData();
+
+            if (m$DataScriptName$List == null)
+            {
+                m$DataScriptName$List = m$DataScriptName$s.Values.ToList();
+            }
+
+            m$DataScriptName$List.Sort(CompareRankScoreData);
+            return m$DataScriptName$List;
+        }
+
+        private int CompareRankScoreData($DataScriptName$ x, $DataScriptName$ y)
+        {
+            if (x.State == (int)ValidityType.Forever && y.State != (int)ValidityType.Forever)
+                return -1; // x.state 为 1，但 y.state 不为 1，则 x 排在 y 前面
+            else if (x.State != (int)ValidityType.Forever && y.State == (int)ValidityType.Forever)
+                return 1; // x.state 不为 1，但 y.state 为 1，则 y 排在 x 前面
+            else
+            {
+                $TableInfo$ xinfo = Get$TableInfo$ById(x.Id);
+                $TableInfo$ yinfo = Get$TableInfo$ById(y.Id);
+                return xinfo.SortIndex.CompareTo(yinfo.SortIndex); // 在 state 相同时，按 id 升序排序
+            }
+        }
+
+
+        public $TableInfo$ Get$TableInfo$ById(int id)
+        {
+            return $TableInfo$Table.GetDataRow(id);
+        }
+
+        public string GetIconUrl(int id = 0)
+        {
+            if (m$DataScriptName$s == null || m$DataScriptName$s.Count == 0)
+                LoadData();
+
+            $TableInfo$ info = Get$TableInfo$ById(id);
+            if (info != null)
+            {
+                return "Personal_Portrait/" + info.Icon;
+            }
+
+            return "Personal_Portrait/ui_Common_portrait_1";
+        }
+        
+        #endregion
+
+        #region 数据接口
+        /// <summary>
+        /// 判断是否解锁
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool IsUnLock(int id)
+        {
+            if (m$DataScriptName$s == null || m$DataScriptName$s.Count == 0)
+                LoadData();
+
+            if (m$DataScriptName$s.Contains(id))
+            {
+                return m$DataScriptName$s[id].State == (int)ValidityType.Forever;
+            }
+
+            return false;
+        }
+        /// <summary>
+        /// 商品或者奖励的方式直接解锁
+        /// </summary>
+        /// <param name="id"></param>
+        public void Unlock(int id)
+        {
+            if (m$DataScriptName$s == null || m$DataScriptName$s.Count == 0)
+                LoadData();
+
+            if (m$DataScriptName$s.Contains(id))
+            {
+                //解锁
+                m$DataScriptName$s[id].State = (int)ValidityType.Forever;
+            }
+            SaveData();
+        }
+        
+
+        /// <summary>
+        /// 使用
+        /// </summary>
+        /// <param name="id"></param>
+        public void Use(int id)
+        {
+
+        }
+        #endregion
+    }
+}
